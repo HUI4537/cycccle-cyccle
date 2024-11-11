@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Places</title>
+    <link rel="stylesheet" href="../static/Menu/menu_style.css">
+    <script src="../static/Menu/menu_script.js" defer></script>
+    <link rel="stylesheet" href="../static/Recommend/recommend_style.css">
+    <script src="../static/Recommend/recommend_script.js" defer></script>
+</head>
+<body>
+    <div class="header">
+        <div class="hamburger-menu" id="hamburger-menu">&#9776;</div>
+        <div class="logo_container">
+            <img src="../static/logo.png" alt="logo" class="logo" />
+        </div>
+        <nav class="sidebar" id="sidebar">
+            <ul class="sidebar-nav">
+                <li class="nav-item"><a href="../" class="nav-link">홈</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">설정</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        {% for place in recommended_places %}
+        <div class="card">
+            <img src="{{ place['Img'] }}" alt="{{ place['Name'] }} Image">
+            <div class="card-content">
+                {% if place['Homepage'] != 'unknown' %}
+                <h2 class="card-title"><a href="#" onclick="openPopup(/'{{ place['Name'] }}'/ , /'{{ place['Address'] }}'/, /'{{ place['Homepage'] }}'/); return false;" style="text-decoration: none; color: #333;">{{ place['Name'] }}</a></h2>
+                {% else %}
+                <h2 class="card-title">{{ place['Name'] }}</h2>
+                {% endif %}
+                <div class="card-info">
+                    <span class="distance">574m</span> <!-- 예시 거리 -->
+                </div>
+                <p class="card-address">{{ place['Address'] }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
