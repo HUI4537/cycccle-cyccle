@@ -25,21 +25,16 @@
 
     <div class="container">
         {% for place in recommended_places %}
-        <div class="card">
-            <img src="{{ place['Img'] }}" alt="{{ place['Name'] }} Image">
+        {% set place_id = place['Homepage'].split('/')[-1] %} <!-- Kakao URL에서 ID 추출 -->
+        <div class="card" onclick="toggleSelection('{{ place_id }}')" id="place-{{ place_id }}">
+            <img src="{{ place['Img'] }}" alt="Place Image">
             <div class="card-content">
-                {% if place['Homepage'] != 'unknown' %}
-                <h2 class="card-title"><a href="#" onclick="openPopup(/'{{ place['Name'] }}'/ , /'{{ place['Address'] }}'/, /'{{ place['Homepage'] }}'/); return false;" style="text-decoration: none; color: #333;">{{ place['Name'] }}</a></h2>
-                {% else %}
-                <h2 class="card-title">{{ place['Name'] }}</h2>
-                {% endif %}
-                <div class="card-info">
-                    <span class="distance">574m</span> <!-- 예시 거리 -->
-                </div>
+                <h3 class="card-title">{{ place['Name'] }}</h3>
                 <p class="card-address">{{ place['Address'] }}</p>
             </div>
         </div>
         {% endfor %}
+        <button onclick="submitSelection()" class="next-button">다음</button>
     </div>
 </body>
 </html>
