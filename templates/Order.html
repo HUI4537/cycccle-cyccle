@@ -6,8 +6,8 @@
     <title>Recommended Places</title>
     <link rel="stylesheet" href="../static/Menu/menu_style.css">
     <script src="../static/Menu/menu_script.js" defer></script>
-    <link rel="stylesheet" href="../static/Recommend/recommend_style.css">
-    <script src="../static/Recommend/recommend_script.js" defer></script>
+    <link rel="stylesheet" href="../static/Order/order_style.css">
+    <script src="../static/Order/order_script.js" defer></script>
 </head>
 <body>
     <div class="header">
@@ -21,21 +21,16 @@
                 <li class="nav-item"><a href="#" class="nav-link">설정</a></li>
             </ul>
         </nav>
-    </div>
-
-    <div class="container">
-        {% for place in recommended_places %}
-        {% set place_id = place['Name'] | replace(' ', '_') %} <!-- 가게 이름을 ID로 사용 -->
-        <div class="card" onclick="toggleSelection('{{ place_id }}')" id="place-{{ place_id }}">
-            <img src="{{ place['Img'] }}" alt="Place Image">
-            <div class="card-content">
-                <h3 class="card-title">{{ place['Name'] }}</h3>
-                <p class="card-address">{{ place['Address'] }}</p>
-            </div>
-        </div>
+    </div>  
+    <p></p>
+    <h1>Reorder Places</h1>
+    <div id="place-list">
+        {% for place in place_list %}
+            <div class="place-box" data-place-name="{{ place }}" draggable="true">{{ place }}</div>
         {% endfor %}
-        <button onclick="submitSelection()" class="next-button">다음</button>
     </div>
-    
+    <button id="save-button">저장하기</button>
+
+   
 </body>
 </html>

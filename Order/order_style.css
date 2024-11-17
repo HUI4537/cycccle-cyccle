@@ -1,0 +1,35 @@
+#place-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.place-box {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    cursor: grab;
+}
+#save-button {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 50px;
+    background-color: #202C59;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+#save-button:hover {
+    background-color: #202C59;
+}
+#save-button:active {
+    background-color: #202C59;
+}
+
