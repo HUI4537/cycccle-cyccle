@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필</title>
+    <link rel="stylesheet" href="../static/login/styles.css">
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <header class="header">
+    <div class="header-left">
+      <div class="menu-icon">&#9776;</div>
+      <h1 class="logo">시끌시끌</h1>
+    </div>
+
+    <!-- 오른쪽 상단 프로필/로그아웃 버튼 -->
+    <div class="header-right">
+      <a href="{{ url_for('home') }}" class="header-btn">홈</a>
+      <a href="{{ url_for('logout') }}" class="header-btn">로그아웃</a>
+    </div>
+  </header>
+
+  <!-- 프로필 내용 -->
+  <section class="content">
+    <h2>프로필 페이지</h2>
+    <div class="profile-details">
+        <p>계정 정보:</p>
+        <table>
+            <tr>
+                <td>사용자명:</td>
+                <td>{{ account['username'] }}</td>
+            </tr>
+            <tr>
+                <td>비밀번호:</td>
+                <td>******</td>
+            </tr>
+            <tr>
+                <td>이메일:</td>
+                <td>{{ account['email'] }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="profile-tracks">
+        <h3>내 트랙 목록</h3>
+        {% if tracks %}
+            {% for track in tracks %}
+                <div class="track-item">
+                    <p>생성일: {{ track.created_at }}</p>
+                    <p>장소들: {{ track.track_places }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>아직 저장된 트랙이 없습니다.</p>
+        {% endif %}
+    </div>
+  </section>
+
+  <!-- 네비게이션 바 -->
+  <nav class="bottom-nav">
+    <a href="#" class="nav-item">
+      <span>🏠</span>
+      <p>홈</p>
+    </a>
+    <a href="#" class="nav-item">
+      <span>🧳</span>
+      <p>여행하기</p>
+    </a>
+    <a href="#" class="nav-item">
+      <span>📤</span>
+      <p>여행 공유하기</p>
+    </a>
+    <a href="#" class="nav-item">
+      <span>🚀</span>
+      <p>여행 시작하기</p>
+    </a>
+  </nav>
+
+</body>
+</html>

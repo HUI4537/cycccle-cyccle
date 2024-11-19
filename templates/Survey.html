@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id = "title" >Who Are You?</title> 
+    <link rel="stylesheet" href="/static/Survey/survey.css">
+    <link rel="stylesheet" href="/static/Menu/menu_style.css">
+    <script src="/static/Menu/menu_script.js"></script>
+    <!-- JavaScript 파일을 스타일시트로 연결하지 말고, script 태그로 연결 -->
+    <!-- <link rel="stylesheet" href="/static/Survey/survey.js"> 제거 -->
+</head>
+<body> 
+    <div class="header">
+        <div class="hamburger-menu" id="hamburger-menu">&#9776;</div>
+        <div class="logo_container">
+            <img src="../static/logo.png" alt="logo" class="logo" />
+        </div>
+        <nav class="sidebar" id="sidebar">
+            <ul class="sidebar-nav">
+                <li class="nav-item"><a href="../" class="nav-link">홈</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">설정</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="container">
+        
+            
+
+        <section class="question" id="question-1">
+            <h2>Who Are You?</h2>
+
+            <div class="start_box">
+                
+                <p id="start_button">Start survey ↓</p>
+            </div>
+            
+            <div class="question-box">
+                <p>Q. age?</p>
+                <div class="option-group" id="age_range">
+                    <div class="option" data-value="10-20">10-20</div>
+                    <div class="option" data-value="20-30">20-30</div>
+                    <div class="option" data-value="30-50">30-50</div>
+                    <div class="option" data-value="50+">50+</div>
+                </div>
+            </div>
+
+            <div class="question-box" id="question-2">
+                <p>Q.gender?</p>
+                <div class="option-group" id="gender">
+                    <div class="option" data-value="male">Male</div>
+                    <div class="option" data-value="female">Female</div>
+                </div>
+            </div>
+
+            <div class="question-box" id="nationality-select">
+                <p>Q. Nationality?</p>
+                <div class="option-group" id="nationality">
+                    <div class="option" data-value="African">African</div>
+                    <div class="option" data-value="european">european</div>
+                    <div class="option" data-value="American<">American</div>
+                    <div class="option" data-value="south_American">south American</div>
+                    <div class="option" data-value="Arab">Arab</div>
+                    <div class="option" data-value="Asian">Asian</div>
+                </div>
+                
+            </div>
+
+            <div class="question-box" id="question-4">
+                <p>Q. travel taste?</p>
+                <input class="typing" type="text" id="travel_pref" placeholder="  Enter your travel taste" />
+            </div>
+            
+            <div class="question-box" id="question-5">
+                <p>Q. food taste?</p>
+                <input class="typing" type="text" id="food_pref" placeholder="  Enter your food taste" />
+            </div>  
+            
+
+            
+        </section>
+
+        <button class="next-button" onclick="submitData()">NEXT</button>
+    </div>
+
+    <!-- JavaScript 파일을 body 끝부분에 추가 -->
+    <script src="/static/Survey/survey.js"></script>
+</body>
+</html>
