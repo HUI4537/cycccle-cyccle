@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>해커톤</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGEZhcTO1WcGiy4DwMhwOQdccpV3umMvA&libraries=places"></script>
+    
+    <link rel="stylesheet" href="../static/information_style.css">
+    <script src="../static/Menu/menu_script.js"></script>
+    <link rel="stylesheet" href="../static/Menu/menu_style.css">
+    <script src="../static/information_script.js"></script>
+
+</head>
+<body>
+      <!-- 헤더 -->
+  <header class="header">
+    <div class="logo_container">
+      <img src="picture\logo\tlRMftlRMf.png" alt="logo" class="logo"/>
+    </div>
+    <div class="hamburger-menu" id="hamburger-menu">
+      &#9776;
+    </div>
+
+  </header>
+
+  <!-- 사이드바 -->
+  <nav class="sidebar" id="sidebar">
+    <ul class="sidebar-nav">
+      <li class="nav-item"><a href="/../../../" class="nav-link">홈</a></li>
+      <li class="nav-item"><a href="/../../../management" class="nav-link">트랙 고르기</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">트랙 공유하기</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">여행 시작하기</a></li>
+    </ul>
+  </nav>
+
+
+    <!-- 지도 -->
+    <div id="map"></div>
+
+    <!-- 버튼 -->
+    <div class="circle-button-container">
+        <button class="circle-button" onclick="showCategory('bicycle_store')">
+            <img src="../picture/bicycle.png" alt="Bicycle Store">
+        </button>
+        <button class="circle-button text-button" onclick="showCategory('bicycle_parking')">P</button>
+        <button class="circle-button" onclick="showCategory('toilet')">
+            <img src="../picture/toilet.png" alt="Toilet">
+        </button>
+        <button class="circle-button" onclick="showCategory('train_station')">
+            <img src="../picture/train.png" alt="Train Station">
+        </button>
+        <button class="circle-button" onclick="showPopup()">
+            <img src="../picture/info.png" alt="Information">
+        </button>
+    </div>
+    
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <div id="popup-data"></div>
+        </div>
+    </div>
+
+    <!-- 지도 스크립트 -->
+    <script>
+        let map; 
+        let userLocation; // 사용자 위치
+        let markers = []; // 현재 표시된 마커 저장
+
+        function initMap() {
+            // 사용자 위치 가져오기
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    // 지도 초기화
+                    map = new google.maps.Map(document.getElementById("map"), {
+                        center: userLocation,
+                        zoom: 14,
+                        disableDefaultUI: true 
+                    });
+
+                    // 사용자 위치 마커 추가
+                    new google.maps.Marker({
+                        position: userLocation,
+                        map: map,
+                        title: "Your Location",
+                        icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                    });
+                }, () => {
+                    alert("Unable to fetch your location. Please enable location access.");
+                });
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
+        }
+
+        function showCategory(category) {
+            // 이전 마커 제거
+            markers.forEach(marker => marker.setMap(null));
+            markers = [];
+
+            // Places API 서비스 초기화
+            const service = new google.maps.places.PlacesService(map);
+
+            // 선택된 카테고리에 해당하는 장소 검색
+            service.nearbySearch({
+                location: userLocation,
+                radius: 2000, 
+                type: category
+            }, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    results.forEach(place => {
+                        const marker = new google.maps.Marker({
+                            position: place.geometry.location,
+                            map: map,
+                            title: place.name,
+                            icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+                        });
+
+                        // 마커 클릭 시 장소 세부 정보 표시
+                        const infoWindow = new google.maps.InfoWindow();
+                        marker.addListener("click", () => {
+                            service.getDetails({ placeId: place.place_id }, (placeDetails, detailsStatus) => {
+                                if (detailsStatus === google.maps.places.PlacesServiceStatus.OK) {
+                                    const content = `
+                                        <div>
+                                            <h3>${placeDetails.name}</h3>
+                                            <p><b>Address:</b> ${placeDetails.formatted_address || "N/A"}</p>
+                                            <p><b>Phone:</b> ${placeDetails.formatted_phone_number || "N/A"}</p>
+                                            <p><b>Open Now:</b> ${placeDetails.opening_hours?.isOpen() ? "Yes" : "No"}</p>
+                                            <p><b>Rating:</b> ${placeDetails.rating || "N/A"}</p>
+                                        </div>
+                                    `;
+                                    infoWindow.setContent(content);
+                                    infoWindow.open(map, marker);
+                                }
+                            });
+                        });
+
+                        // 현재 표시된 마커 목록에 추가
+                        markers.push(marker);
+                    });
+                } else {
+                    alert(` ${category}이 존재하지 않습니다`);
+                }
+            });
+        }
+        
+
+        // 지도 초기화 함수 호출
+        window.onload = initMap;
+    </script>
+</body>
+</html>
