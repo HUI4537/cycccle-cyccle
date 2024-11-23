@@ -158,6 +158,8 @@ body {
 .logo_container {
     display: flex;
     align-items: center;
+    transform: translate(-40%, -10%);
+
 }
 
 .logo {
@@ -165,13 +167,15 @@ body {
     height: 90px; 
     object-fit: contain; 
     display: block; 
+    position: relative;
+    right: 15px;
 }
 
 /* 햄버거 메뉴 스타일 */
 .hamburger-menu {
     font-size: 24px;
     cursor: pointer;
-    color: #333;
+    color: #ffffff;
     margin-top: -15px;
 }
 

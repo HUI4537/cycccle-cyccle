@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
+
     const hamburgerMenu = document.getElementById('hamburger-menu');
     const sidebar = document.getElementById('sidebar');
 
@@ -6,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     hamburgerMenu.addEventListener('click', function(event) {
         event.stopPropagation();
         sidebar.classList.toggle('active');
+        console.log("it works")
     });
 
     // Close sidebar when clicking outside of it

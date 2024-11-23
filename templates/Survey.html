@@ -14,7 +14,7 @@
     <div class="header">
         <div class="hamburger-menu" id="hamburger-menu">&#9776;</div>
         <div class="logo_container">
-            <img src="../static/logo.png" alt="logo" class="logo" />
+            <img src="/picture/logo/logo.png" alt="logo" class="logo" />
         </div>
         <nav class="sidebar" id="sidebar">
             <ul class="sidebar-nav">
@@ -28,11 +28,11 @@
             
 
         <section class="question" id="question-1">
-            <h2>Who Are You?</h2>
+            <h2>너는 누구야?</h2>
 
             <div class="start_box">
                 
-                <p id="start_button">Start survey ↓</p>
+                <p id="start_button">설문시작 ↓</p>
             </div>
             
             <div class="question-box">
@@ -56,12 +56,12 @@
             <div class="question-box" id="nationality-select">
                 <p>Q. Nationality?</p>
                 <div class="option-group" id="nationality">
-                    <div class="option" data-value="African">African</div>
-                    <div class="option" data-value="european">european</div>
-                    <div class="option" data-value="American<">American</div>
-                    <div class="option" data-value="south_American">south American</div>
-                    <div class="option" data-value="Arab">Arab</div>
                     <div class="option" data-value="Asian">Asian</div>
+                    <div class="option" data-value="American">American</div>
+                    <div class="option" data-value="European">European</div>
+                    <div class="option" data-value="African">African</div>
+                    <div class="option" data-value="Arab">Arab</div>
+                    <div class="option" data-value="South_American">South American</div>
                 </div>
                 
             </div>
@@ -75,6 +75,33 @@
                 <p>Q. food taste?</p>
                 <input class="typing" type="text" id="food_pref" placeholder="  Enter your food taste" />
             </div>  
+            
+            <div class="question-box" id="question-6">
+                <p>Q. When do you want to travel?</p>
+                <div class="calendar-container">
+                    <div class="date-picker">
+                        <div class="calendar-header">
+                            <h3 id="calendar-title"></h3>
+                        </div>
+                        <div class="calendar" id="calendar">
+                            <!-- 캘린더는 JavaScript로 동적 생성됩니다 -->
+                        </div>
+                    </div>
+                    <div class="selected-dates">
+                        <p>Start: <span id="start-date">선택해주세요</span></p>
+                        <p>End: <span id="end-date">선택해주세요</span></p>
+                    </div>
+                    <button class="calendar-next-button">다음</button>
+                </div>
+            </div>
+
+            <div class="question-box" id="question-7">
+                <p>Q. Which track type do you prefer?</p>
+                <div class="option-group" id="track-type">
+                    <div class="option" data-value="linear">직선형 트랙</div>
+                    <div class="option" data-value="circular">원형 트랙</div>
+                </div>
+            </div>
             
 
             

@@ -13,7 +13,7 @@
     <div class="header">
         <div class="hamburger-menu" id="hamburger-menu">&#9776;</div>
         <div class="logo_container">
-            <img src="../static/logo.png" alt="logo" class="logo" />
+            <img src="/picture/logo/logo.png" alt="logo" class="logo" />
         </div>
         <nav class="sidebar" id="sidebar">
             <ul class="sidebar-nav">
@@ -24,8 +24,10 @@
     </div>
 
     <div class="container">
+
+        <!-- 추천 장소 목록 -->
         {% for place in recommended_places %}
-        {% set place_id = place['Name'] | replace(' ', '_') %} <!-- 가게 이름을 ID로 사용 -->
+        {% set place_id = place['Name'] | replace(' ', '_') %}
         <div class="card" onclick="toggleSelection('{{ place_id }}')" id="place-{{ place_id }}">
             <img src="{{ place['Img'] }}" alt="Place Image">
             <div class="card-content">

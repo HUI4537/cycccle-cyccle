@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,38 +10,37 @@
   <script src="/static/Menu/menu_script.js"></script>
   <script src="/static/Main/main.js"></script>
 </head>
+
 <body>
 
   <!-- 헤더 -->
   <header class="header">
     <!-- 로고 -->
     <div class="logo_container">
-      <img src="../picture/logo/logo.png" alt="logo" class="logo"/>
+      <img src="../picture/logo/logo.png" alt="logo" class="logo" />
     </div>
-  
+
     <!-- 햄버거 메뉴 -->
     <div class="hamburger-menu" id="hamburger-menu">
       &#9776;
     </div>
-  
-    <!-- 로그인/로그아웃 버튼 -->
-    <div class="header-right">
-      {% if session['loggedin'] %}
-        <a href="{{ url_for('profile') }}" class="header-btn">프로필</a>
-        <a href="{{ url_for('logout') }}" class="header-btn">로그아웃</a>
-      {% else %}
-        <a href="{{ url_for('login') }}" class="header-btn">로그인</a>
-      {% endif %}
-    </div>
+
   </header>
 
   <!-- 사이드바 -->
   <nav class="sidebar" id="sidebar">
     <ul class="sidebar-nav">
       <li class="nav-item"><a href="/../../../" class="nav-link">홈</a></li>
-      <li class="nav-item"><a href="{{ url_for('survey') }}" class="nav-link">트랙 고르기</a></li>
+      <li class="nav-item"><a href="{{ url_for('official_survey') }}" class="nav-link">트랙 고르기</a></li>
       <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link">트랙 공유하기</a></li>
       <li class="nav-item"><a href="{{ url_for('Journey') }}" class="nav-link">여행 시작하기</a></li>
+      {% if session['loggedin'] %}
+      <li class="nav-item"><a href="{{ url_for('profile') }}" class="nav-link">마이페이지</a></li>
+      {% else %}
+      <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link">로그인</a></li>
+      {% endif %}
+
+
     </ul>
   </nav>
 
@@ -117,7 +117,7 @@
       <span class="nav_icon">🏠</span>
       <p>홈</p>
     </a>
-    <a href="{{ url_for ('survey') }}" class="nav_item">
+    <a href="{{ url_for ('Or') }}" class="nav_item">
       <span class="nav_icon">🗺️</span>
       <p>트랙 고르기</p>
     </a>
@@ -132,4 +132,5 @@
   </nav>
 
 </body>
+
 </html>

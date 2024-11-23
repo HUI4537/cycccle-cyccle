@@ -11,7 +11,7 @@ import hashlib
 import os
 import json
 import re
-#경로 가져오기
+#경로 가져오기 ㄹㄹ 
 from place_recommender import PlaceRecommender
 from route_finder import get_route, get_waypoints
 import pandas as pd
@@ -441,8 +441,6 @@ from place_recommender import PlaceRecommender
 import pandas as pd
 
 
-
-# 추천 페이지 라우트
 @app.route('/Recommend')
 def Recommend():
     # 변수 초기화
@@ -451,8 +449,9 @@ def Recommend():
 
     try:
         # restaurant.csv 파일 로드
-        csv_path = '11-1SWhack/khg/restaurant.csv'
+        csv_path = 'D:/2.Projects/11-23 sw동행 해커톤/cycccle-cyccle/restaurant.csv'
         restaurant_data = pd.read_csv(csv_path)
+        print(restaurant_data)
     except Exception as e:
         print(f"Error loading CSV file: {e}")
         print(f"Current working directory: {os.getcwd()}")
@@ -502,9 +501,7 @@ def Recommend():
 
     return render_template('Recommend.html', recommended_places=recommended_places)
 
-@app.route('/Survey')
-def survey():
-    return render_template('Survey.html')
+
 
 @app.route('/Order')
 def Order():
@@ -523,6 +520,9 @@ def save_order():
         
     data = request.get_json()
     ordered_places = data.get('orderedPlaces', [])
+    start_date = data.get('startDate')
+    end_date = data.get('endDate')
+    track_type = data.get('trackType')
     
     if not ordered_places:
         return jsonify({'error': 'No places provided'}), 400
@@ -536,9 +536,9 @@ def save_order():
         
         # 트랙 정보를 데이터베이스에 저장
         cursor.execute('''
-            INSERT INTO tracks (user_id, track_places)
-            VALUES (?, ?)
-        ''', (session['id'], track_places))
+            INSERT INTO tracks (user_id, track_places, start_date, end_date, track_type)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (session['id'], track_places, start_date, end_date, track_type))
         
         conn.commit()
         conn.close()
@@ -598,7 +598,19 @@ def Journey():
         return f"Error processing route data: {str(e)}", 500
     # 경로 포인트를 지도에 전달
     return render_template('Journey.html', route_points=f"{route_points}".replace("'",'"'))
+@app.route('/Or')
+def Or():
+    return render_template('or.html')
+    
+@app.route('/official')
+def official_survey():
+    return render_template('official.html')
 
-
+@app.route('/Survey')
+def Survey():
+    return render_template('Survey.html')
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+#----------------journey에 tts병합

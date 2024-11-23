@@ -65,3 +65,20 @@ body {
 .next-button:hover {
     background-color: #202C59;
 }
+.user-preferences {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-preferences ul {
+    list-style: none;
+    padding: 0;
+}
+
+.user-preferences li {
+    margin: 5px 0;
+    color: #333;
+}

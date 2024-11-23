@@ -20,14 +20,14 @@
 
 .sidebar {
     position: fixed;
-    top: 0;
+    top: -70px;
     left: -250px; /* Sidebar hidden by default */
     width: 250px;
-    height: 100%;
+    height: 150%;
     background-color: #F0A202;
     transition: left 0.3s ease-in-out;
     padding-top: 60px;
-    z-index: 1500; /* Ensures the sidebar is on top of the map */
+    z-index:3000; /* Ensures the sidebar is on top of the map */
 }
 
 .sidebar-nav {
@@ -66,6 +66,22 @@
     height: auto;
 }
 .logo {
-    width: 75%; /* 이미지 너비를 절반으로 설정 */
+    width: 100%; /* 이미지 너비를 절반으로 설정 */
     height: auto; /* 높이는 자동으로 설정 */
+    
+}
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90px; /* 원하는 높이로 조정 */
+    background-color: #ffffff;
+    color: black;
+    padding: 0 20px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* 다른 요소 위로 고정 */
 }

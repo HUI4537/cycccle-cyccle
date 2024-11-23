@@ -19,32 +19,9 @@ body {
     padding: 0;
 }
 
-/* 네비게이션 바 */
-.navbar {
-    background-color: var(--main-color);
-    display: flex;
-    justify-content: center; /* 중앙 정렬 */
-    align-items: center;
-    position: relative; /* 햄버거 메뉴 위치 유지 */
-    height: 56px;
-}
 
-.hamburger {
-    position: absolute;
-    left: 10px; /* 햄버거 메뉴는 좌측 고정 */
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: white;
-}
 
-.logo {
-    margin: 0 auto;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-}
+
 
 /* 게시글 목록 */
 .post-list {
@@ -427,7 +404,7 @@ body {
     background: none;
     border: none;
     color: #007bff;
-    font-size: 1.2em; /* 크기 키움 */
+    font-size: 2em; /* 크기 키움 */
     font-weight: bold; /* 굵게 */
     cursor: pointer;
     writing-mode: horizontal-tb; /* 가로로 설정 */
@@ -460,73 +437,13 @@ body {
 }
 
 
-.hamburger-menu {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 55px;
-    height: 55px;
-    background-color: #F0A202;
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5em;
-    cursor: pointer;
-    z-index: 1000; /* Ensures the menu is on top of the map */
-    text-align: center;
-    line-height: 40px; /* Ensures the text is vertically centered */
-    z-index: 1600;
-}
-
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -250px; /* Sidebar hidden by default */
-    width: 250px;
-    height: 100%;
-    background-color: #F0A202;
-    transition: left 0.3s ease-in-out;
-    padding-top: 60px;
-    z-index: 1500; /* Ensures the sidebar is on top of the map */
-}
 
 
 
-.sidebar-nav {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
 
-.nav-item {
-    margin: 20px 0;
-    text-align: center;
-}
 
-.nav-link {
-    color: #fff;
-    text-decoration: none;
-    font-size: 1.2em;
-}
 
-.nav-link:hover {
-    text-decoration: underline;
-}
 
-.sidebar.active {
-    left: 0; /* Show sidebar */
-}
-
-.sidebar.show {
-    transform: translateX(0);
-}
-
-.sidebar-nav {
-    list-style-type: none;
-    padding: 0;
-}
 
 .nav-item {
     padding: 10px 20px;

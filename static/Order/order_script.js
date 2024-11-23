@@ -46,31 +46,32 @@ let draggedItem = null;
                 orderedPlaces.push(item.dataset.placeName);
             });
 
+            const urlParams = new URLSearchParams(window.location.search);
+            
             fetch('/save_order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ orderedPlaces: orderedPlaces }),
+                body: JSON.stringify({
+                    orderedPlaces: orderedPlaces,
+                    startDate: urlParams.get('start_date'),
+                    endDate: urlParams.get('end_date'),
+                    trackType: urlParams.get('track_type')
+                }),
             })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                    return;
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     alert('트랙이 성공적으로 저장되었습니다.');
-                    window.location.href = '/';  // 메인 페이지로 리다이렉트
+                    window.location.href = '/Journey';
                 } else {
-                    alert(data.error || '저장 중 오류가 발생했습니다.');
+                    alert(data.error || '트랙 저장에 실패했습니다.');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('저장 중 오류가 발생했습니다.');
+                alert('트랙 저장 중 오류가 발생했습니다.');
             });
         });
 
