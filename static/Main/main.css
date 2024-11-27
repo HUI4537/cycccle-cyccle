@@ -340,3 +340,66 @@ body > *:not(.header) {
     font-size: 18px;
     margin-bottom: 4px;
 }
+
+.hidden {
+  display: none;
+}
+
+.dropdown-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  position: absolute;
+  z-index: 100;
+}
+
+.dropdown-menu li {
+  display: block;
+}
+
+.dropdown-menu li button {
+  padding: 10px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-menu li button:hover {
+  background-color: #f0f0f0;
+}
+
+
+.hidden {
+    display: none;
+  }
+  
+.dropdown-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    position: absolute;
+    z-index: 100;
+  }
+  
+.dropdown-menu li {
+    display: block;
+  }
+  
+.dropdown-menu li button {
+    padding: 10px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+.dropdown-menu li button:hover {
+    background-color: #f0f0f0;
+}

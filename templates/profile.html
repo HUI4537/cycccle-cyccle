@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>프로필</title>
-    <link rel="stylesheet" href="../static/login/styles.css">
+    <link rel="stylesheet" href="../static/Profile/profile_style.css">
     <link rel="stylesheet" href="../static/Menu/menu_style.css">
     <script src="../static/Menu/menu_script.js"></script>
 </head>
-<body>
-  <div class="header">
+<div class="header">
     <div class="hamburger-menu" id="hamburger-menu">&#9776;</div>
     <div class="logo_container">
         <img src="/picture/logo/logo.png" alt="logo" class="logo" />
@@ -21,7 +20,7 @@
         </ul>
     </nav>
   </div>
-
+<body>
   <!-- 프로필 내용 -->
   <section class="content">
     <div class="profile-details">
@@ -46,21 +45,23 @@
         <h3>내 트랙 목록</h3>
         {% if tracks %}
             {% for track in tracks %}
-                <div class="track-item-container">
-                  <div class="track-item">
-                      <p>생성일: {{ track.created_at }}</p>
-                      <p>장소들: {{ track.track_places }}</p>
-                      <p>시작일: {{ track.start_date or '미지정' }}</p>
-                      <p>종료일: {{ track.end_date or '미지정' }}</p>
-                      <p>트랙 타입: {{ track.track_type or '미지정' }}</p>
-                  </div>
+                <div class="track-item-container" onclick="location.href='/Journey?track_id={{ track.id }}'">
+                    
+                    <div class="track-info">
+                        <p>생성일: {{ track.created_at }}</p>
+                        <p>장소들: {{ track.track_places }}</p>
+                        <p>시작일: {{ track.start_date or '미지정' }}</p>
+                        <p>종료일: {{ track.end_date or '미지정' }}</p>
+                        <p>트랙 타입: {{ track.track_type or '미지정' }}</p>
+                    </div>
+                    <!-- <button class="delete-btn" onclick="confirmDelete(event, {{ track.id }})">삭제</button> -->
                 </div>
             {% endfor %}
         {% else %}
             <p>아직 저장된 트랙이 없습니다.</p>
         {% endif %}
     </div>
-    <a href="{{ url_for('logout') }}" class="header-btn">로그아웃</a>
+    <a href="{{ url_for('logout') }}" class="logout-btn">로그아웃</a>
   </section>
 </body>
 </html>

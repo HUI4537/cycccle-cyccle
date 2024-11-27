@@ -12,6 +12,16 @@ function toggleSelection(placeId) {
 }
 
 function submitSelection() {
-    const query = selectedPlaces.map(id => `places=${id}`).join('&');
-    window.location.href = `/Order?${query}`;
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    
+    const newParams = new URLSearchParams();
+    selectedPlaces.forEach(id => newParams.append('places', id));
+    
+    ['age_range', 'gender', 'nationality', 'travel_pref', 'food_pref', 'start_date', 'end_date', 'track_type'].forEach(param => {
+        if (currentUrlParams.has(param)) {
+            newParams.append(param, currentUrlParams.get(param));
+        }
+    });
+    
+    window.location.href = `/Order?${newParams.toString()}`;
 }

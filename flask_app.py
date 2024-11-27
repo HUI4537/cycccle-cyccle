@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_from_directory,send_file
 from flask_mysqldb import MySQL
 import os
 import sqlite3
@@ -11,10 +11,14 @@ import hashlib
 import os
 import json
 import re
-#경로 가져오기 ㄹㄹ 
+#경로 가져오기
 from place_recommender import PlaceRecommender
 from route_finder import get_route, get_waypoints
 import pandas as pd
+from geopy.geocoders import Nominatim
+from geopy.distance import geodesic
+from gtts import gTTS
+from schedule_maker import tsp_shortest_path, astar_shortest_path
 
 app = Flask(__name__)
 CORS(app)  # CORS 설정 추가
@@ -111,7 +115,7 @@ def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('username', None)
-    return redirect(url_for('login'))
+    return redirect(url_for('gomain'))
 
 # 회원가입 페이지
 @app.route('/pythonlogin/register', methods=['GET', 'POST'])
@@ -151,25 +155,42 @@ def home():
 # 프로필 페이지
 @app.route('/pythonlogin/profile')
 def profile():
-    if 'loggedin' in session:
-        conn = get_logindb_connection()
-        cursor = conn.cursor()
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
         
-        # 사용자 정보 가져오기
-        cursor.execute('SELECT * FROM accounts WHERE id = ?', (session['id'],))
-        account = cursor.fetchone()
+    conn = get_logindb_connection()
+    cursor = conn.cursor()
+    
+    # 사용자 계정 정보 가져오기
+    cursor.execute('SELECT * FROM accounts WHERE id = ?', (session['id'],))
+    account = cursor.fetchone()
+    
+    # 사용자의 트랙 정보 가져오기
+    cursor.execute('''
+        SELECT id, created_at, track_places, start_date, end_date, track_type 
+        FROM tracks 
+        WHERE user_id = ? 
+        ORDER BY created_at DESC
+    ''', (session['id'],))
+    
+    tracks = []
+    for track in cursor.fetchall():
+        places = track[2].split(',')
+        first_place = places[0] if places else None
+        last_place = places[-1] if places else None
         
-        # 사용자의 트랙 정보 가져오기
-        cursor.execute('''
-            SELECT * FROM tracks 
-            WHERE user_id = ? 
-            ORDER BY created_at DESC
-        ''', (session['id'],))
-        tracks = cursor.fetchall()
-        
-        conn.close()
-        return render_template('profile.html', account=account, tracks=tracks, loggedin=True)
-    return redirect(url_for('login'))
+        tracks.append({
+            'id': track[0],
+            'created_at': track[1],
+            'track_places': track[2],
+            'start_date': track[3],
+            'end_date': track[4],
+            'track_type': track[5],
+
+        })
+    
+    conn.close()
+    return render_template('profile.html', account=account, tracks=tracks)
 
 
 @app.context_processor
@@ -495,13 +516,12 @@ def Recommend():
 
             # 추천된 장소 ID를 기반으로 restaurant_data에서 해당 장소 정보 가져오기
             recommended_places = restaurant_data[restaurant_data.index.isin(recommended_place_ids)].to_dict('records')
+
         except Exception as e:
             print(f"Error in recommendation process: {e}")
             recommended_places = []
 
     return render_template('Recommend.html', recommended_places=recommended_places)
-
-
 
 @app.route('/Order')
 def Order():
@@ -546,7 +566,6 @@ def save_order():
         return jsonify({'success': True, 'message': '트랙이 저장되었습니다.'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 @app.route('/Journey')
 def Journey():
     if 'loggedin' not in session:
@@ -569,35 +588,48 @@ def Journey():
         return "저장된 트랙이 없습니다.", 400
 
     # 쉼표로 구분된 장소 문자열을 리스트로 변환
-    place_names = track['track_places'].split(',')
+    place_names = track[0].split(',') # track은 튜플이므로 첫 번째 요소에 접근
     
     # 가게 이름으로 경유지 좌표 가져오기
-    waypoints = get_waypoints(place_names)  # get_waypoints 함수가 올바른 형식으로 반환한다고 가정
-    if not waypoints or len(waypoints) < 2:
-        return "Insufficient waypoints for route calculation", 400
+    waypoints = get_waypoints(place_names)
+    print("Waypoints:", waypoints) # 디버깅을 위한 출력
+    
+    if not waypoints:
+        return "경유지 좌표를 가져올 수 없습니다.", 400
+    if len(waypoints) < 2:
+        return "경로 계산을 위해서는 최소 2개 이상의 경유지가 필요합니다.", 400
     
     # Tmap API를 통해 경로 데이터 가져오기
-    route_data = get_route(waypoints)  # get_route 함수가 API 요청 및 응답을 처리한다고 가정
-    if not route_data or 'features' not in route_data:
-        return "Failed to retrieve route data", 500
+    try:
+        route_data = get_route(waypoints)
+        if not route_data:
+            return "경로 데이터를 가져오는데 패했습니다.", 500
+        if 'features' not in route_data:
+            return "잘못된 경로 데이터 형식입니다.", 500
+    except Exception as e:
+        print(f"Route calculation error: {str(e)}")
+        return f"경로 계산 중 오류가 발생했습니다: {str(e)}", 500
 
     # 경로 데이터에서 라인 좌표 추출
     route_points = []
     try:
         for feature in route_data['features']:
-            # 라인스트링(LineString) 데이터인지 확인
             if feature['geometry']['type'] == 'LineString':
-                # 라인 좌표를 경로 포인트로 변환
                 for coordinate in feature['geometry']['coordinates']:
-                    # 좌표가 [longitude, latitude] 형식이라면 변환
                     route_points.append({
-                        "lat": float(coordinate[1]),  # 위도
-                        "lng": float(coordinate[0])  # 경도
+                        "lat": float(coordinate[1]),
+                        "lng": float(coordinate[0])
                     })
     except Exception as e:
-        return f"Error processing route data: {str(e)}", 500
+        print(f"Route processing error: {str(e)}")
+        return f"경로 데이터 처리 중 오류가 발생했습니다: {str(e)}", 500
+
+    if not route_points:
+        return "유효한 경로 포인트가 없습니다.", 500
+
     # 경로 포인트를 지도에 전달
-    return render_template('Journey.html', route_points=f"{route_points}".replace("'",'"'))
+    return render_template('Journey.html', route_points=json.dumps(route_points))
+
 @app.route('/Or')
 def Or():
     return render_template('or.html')
@@ -609,8 +641,156 @@ def official_survey():
 @app.route('/Survey')
 def Survey():
     return render_template('Survey.html')
+
+@app.route('/optimize_route', methods=['POST'])
+def optimize_route():
+    data = request.json
+    places = data['places']
+    route_type = data['routeType']
+    
+    if route_type == 'circular':
+        optimized_route, _ = tsp_shortest_path(places)
+    else:
+        optimized_route, _ = astar_shortest_path(places)
+        
+    return jsonify({'optimized_route': optimized_route})
+
+# 트랙 선택 페이지 ------------------------------------------------------------------------------------------------
+
+@app.route('/track_select')
+def track_select():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+        
+    conn = get_logindb_connection()
+    cursor = conn.cursor()
+    
+    # 현재 로그인한 사용자의 트랙 정보 가져오기
+    cursor.execute('''
+        SELECT t.id, t.name, t.created_at, t.track_places,
+               r1.image_url as first_restaurant_image,
+               r2.image_url as last_restaurant_image
+        FROM tracks t
+        LEFT JOIN restaurants r1 ON r1.name = (
+            SELECT value FROM json_each(t.track_places) WHERE key = 0
+        )
+        LEFT JOIN restaurants r2 ON r2.name = (
+            SELECT value FROM json_each(t.track_places) WHERE key = json_array_length(t.track_places) - 1
+        )
+        WHERE t.user_id = ?
+        ORDER BY t.created_at DESC
+    ''', (session['id'],))
+    
+    tracks = []
+    for row in cursor.fetchall():
+        tracks.append({
+            'id': row[0],
+            'name': row[1],
+            'created_date': row[2],
+            'places': row[3].split(','),
+            'first_restaurant_image': row[4] or '/static/default_restaurant.jpg',
+            'last_restaurant_image': row[5] or '/static/default_restaurant.jpg'
+        })
+    
+    conn.close()
+    return render_template('track_select.html', tracks=tracks)
+
+@app.route('/delete_track/<int:track_id>', methods=['DELETE'])
+def delete_track(track_id):
+    if 'loggedin' not in session:
+        return jsonify({'success': False, 'error': '로그인이 필요합니다.'})
+        
+    conn = get_logindb_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute('DELETE FROM tracks WHERE id = ? AND user_id = ?', 
+                      (track_id, session['id']))
+        conn.commit()
+        success = cursor.rowcount > 0
+        return jsonify({'success': success})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+    finally:
+        conn.close()
+
 if __name__ == "__main__":
     app.run(debug=True)
 
 
 #----------------journey에 tts병합
+
+# CSV 파일 로드 및 주소 좌표화
+def load_addresses():
+    geolocator = Nominatim(user_agent="geoapi")
+    data = pd.read_csv("places_en.csv")
+    data.columns = data.columns.str.strip()  # 열 이름의 공백 제거
+    locations = []
+
+    for _, row in data.iterrows():
+        address = row["Address"]
+        name = row["Name"]
+        explanation = row["Explanation"]  # 'Explantion' → 'Explanation'
+        try:
+            location = geolocator.geocode(address)
+            if location:
+                locations.append({
+                    "name": name,
+                    "address": address,
+                    "explanation": explanation,
+                    "lat": location.latitude,
+                    "lng": location.longitude,
+                })
+        except Exception as e:
+            print(f"Error geocoding {address}: {e}")
+    return locations
+
+
+LOCATIONS = load_addresses()
+
+@app.route("/locations", methods=["GET"])
+def get_locations():
+    """지도에 표시할 위치 데이터를 반환."""
+    try:
+        return jsonify(LOCATIONS)
+    except Exception as e:
+        print("Error in /locations:", str(e))  # 에러 메시지 출력
+        return jsonify({"error": "Failed to load locations"}), 500
+
+@app.route("/check-range", methods=["POST"])
+def check_range():
+    """사용자 위치가 반경 안에 있는지 확인."""
+    try:
+        user_lat = float(request.json["lat"])
+        user_lng = float(request.json["lng"])
+
+        for loc in LOCATIONS:
+            place_coords = (loc["lat"], loc["lng"])
+            user_coords = (user_lat, user_lng)
+            if geodesic(place_coords, user_coords).meters <= 500:
+                return jsonify({"in_range": True, "explanation": loc["explanation"]})
+        return jsonify({"in_range": False})
+    except Exception as e:
+        print("Error in /check-range:", str(e))  # 에러 메시지 출력
+        return jsonify({"error": "Failed to check range"}), 500
+
+@app.route("/tts/<message>")
+def tts(message):
+    """TTS 음성을 생성하여 반환."""
+    tts = gTTS(message, lang="en")
+    filepath = "static/tts.mp3"
+    tts.save(filepath)
+    return send_file(filepath)
+
+@app.route("/get_restaurant_image/<restaurant_name>")
+def get_restaurant_image(restaurant_name):
+    try:
+        # CSV 파일 읽기
+        df = pd.read_csv('restaurant.csv')
+        # 식당 이름으로 검색하여 이미지 URL 가져오기
+        restaurant = df[df['Name'] == restaurant_name]
+        if not restaurant.empty:
+            return restaurant.iloc[0]['Img']
+    except Exception as e:
+        print(f"이미지 URL 가져오기 실패: {str(e)}")
+    return None
