@@ -448,9 +448,22 @@ def setup_database():
             )
         ''')
         
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS tracks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                track_places TEXT NOT NULL,
+                start_date TEXT,
+                end_date TEXT,
+                track_type TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES accounts (id)
+            )
+        ''')
+        
         conn.commit()
     except Exception as e:
-        print(f"Database setup error: {e}")
+        print(f"데이터베이스 설정 오류: {e}")
         conn.rollback()
     finally:
         conn.close()
